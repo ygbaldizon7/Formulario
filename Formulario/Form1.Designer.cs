@@ -55,6 +55,7 @@ namespace Formulario
             this.btnLimpiar.TabIndex = 0;
             this.btnLimpiar.Text = "Cancelar";
             this.btnLimpiar.UseVisualStyleBackColor = true;
+            this.btnLimpiar.Click += new System.EventHandler(this.btnLimpiar_Click);
             // 
             // btnGuardar_Click
             // 
@@ -64,6 +65,7 @@ namespace Formulario
             this.btnGuardar_Click.TabIndex = 1;
             this.btnGuardar_Click.Text = "Guardar";
             this.btnGuardar_Click.UseVisualStyleBackColor = true;
+            this.btnGuardar_Click.Click += new System.EventHandler(this.btnGuardar_Click_Click);
             // 
             // label1
             // 
@@ -73,7 +75,7 @@ namespace Formulario
             this.label1.Size = new System.Drawing.Size(50, 13);
             this.label1.TabIndex = 2;
             this.label1.Text = "Nombre :";
-            this.label1.Click += new System.EventHandler(this.label1_Click);
+       
             // 
             // label2
             // 
@@ -140,7 +142,7 @@ namespace Formulario
             this.z.TabIndex = 12;
             this.z.TabStop = false;
             this.z.Text = "Genero";
-            this.z.Enter += new System.EventHandler(this.groupBox1_Enter);
+           
             // 
             // rbHombre
             // 
@@ -152,6 +154,7 @@ namespace Formulario
             this.rbHombre.TabStop = true;
             this.rbHombre.Text = "Hombre";
             this.rbHombre.UseVisualStyleBackColor = true;
+
             // 
             // rbMujer
             // 
@@ -163,6 +166,7 @@ namespace Formulario
             this.rbMujer.TabStop = true;
             this.rbMujer.Text = "Mujer";
             this.rbMujer.UseVisualStyleBackColor = true;
+
             // 
             // lbEdad
             // 
@@ -172,7 +176,7 @@ namespace Formulario
             this.lbEdad.Size = new System.Drawing.Size(38, 13);
             this.lbEdad.TabIndex = 13;
             this.lbEdad.Text = "Edad :";
-            this.lbEdad.Click += new System.EventHandler(this.label5_Click);
+
             // 
             // tbEdad
             // 
