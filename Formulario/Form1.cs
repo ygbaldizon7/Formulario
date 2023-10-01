@@ -1,14 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.IO;
+using System.Text.RegularExpressions;
 using System.Windows.Forms;
-using System.IO; // Libreria para lectura y ecritura de archivos
-
 
 namespace Formulario
 {
@@ -17,10 +11,16 @@ namespace Formulario
         public Form1()
         {
             InitializeComponent();
+
+            // Agregar controladores de eventos TextChanged a los campos
+            tbEdad.TextChanged += ValidarEdad;
+            tbEstatura.TextChanged += ValidarEstatura;
+            tbTelefono.TextChanged += ValidarTelefono;
+            tbNombre.TextChanged += ValidarNombre;
+            tbApellidos.TextChanged += ValidarApellidos;
         }
 
-
-        private void btnGuardar_Click_Click(object sender, EventArgs e)
+        private void btnGuardar_Click(object sender, EventArgs e)
         {
             // Obtener los datos de los TextBox
             string nombres = tbNombre.Text;
@@ -28,7 +28,6 @@ namespace Formulario
             string edad = tbEdad.Text;
             string estatura = tbEstatura.Text;
             string telefono = tbTelefono.Text;
-
 
             // Obtener el género seleccionado
             string genero = "";
@@ -41,33 +40,119 @@ namespace Formulario
                 genero = "Mujer";
             }
 
-            // Crear una cadena con los datos
-            string datos = $"Nombres: {nombres}\r\nApellidos: {apellidos}\r\nTelefono: {telefono} kg\r\nEstatura: {estatura} cm\r\nEdad: {edad} años\r\nGénero: {genero}";
-
-            // Guardar los datos en un archivo de texto
-            string rutaArchivo = "C:/Users/ygbal/Documents/datos.txt";
-            //File.WriteAllText(rutaArchivo, datos);
-            // Verificar si el archivo ya existe
-            bool archivoExiste = File.Exists(rutaArchivo);
-
-            using (StreamWriter writer = new StreamWriter(rutaArchivo, true))
+            // Validar que los campos tengan el formato correcto
+            if (EsEnteroValido(edad) && EsDecimalValido(estatura) && EsEnteroValidoDe10Digitos(telefono) &&
+                EsTextoValido(nombres) && EsTextoValido(apellidos))
             {
-                if (archivoExiste)
+                // Crear una cadena con los datos
+                string datos = $"Nombres: {nombres}\r\nApellidos: {apellidos}\r\nTeléfono: {telefono} kg\r\nEstatura: {estatura} cm\r\nEdad: {edad} años\r\nGénero: {genero}\r\n";
+
+                // Guardar los datos en un archivo de texto
+                string rutaArchivo = "C:/Users/ygbal/Documents/3o12.txt";
+                bool archivoExiste = File.Exists(rutaArchivo);
+                if (archivoExiste == false)
                 {
-                    // Si el archivo existe, añadir un separador antes del nuevo registro
-                    writer.WriteLine();
+                    File.WriteAllText(rutaArchivo, datos);
+                }
+                else
+                {
+                    // Verificar si el archivo ya existe
+                    using (StreamWriter writer = new StreamWriter(rutaArchivo, true))
+                    {
+                        if (archivoExiste)
+                        {
+                            // Si el archivo existe, añadir un separador antes del nuevo registro
+                            writer.WriteLine();
+                        }
+
+                        writer.WriteLine(datos);
+                    }
                 }
 
-                writer.WriteLine(datos);
+                // Mostrar un mensaje con los datos capturados
+                MessageBox.Show("Datos guardados con éxito:\n\n" + datos, "Información", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
+            else
+            {
+                MessageBox.Show("Por favor, ingrese datos válidos en los campos.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
 
-            // Mostrar un mensaje con los datos capturados
-            MessageBox.Show("Datos guardados con éxito:\n\n" + datos, "Información", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        private bool EsEnteroValido(string valor)
+        {
+            int resultado;
+            return int.TryParse(valor, out resultado);
+        }
+
+        private bool EsDecimalValido(string valor)
+        {
+            decimal resultado;
+            return decimal.TryParse(valor, out resultado);
+        }
+
+        private bool EsEnteroValidoDe10Digitos(string valor)
+        {
+            long resultado;
+            return long.TryParse(valor, out resultado) && valor.Length == 10;
+        }
+
+        private bool EsTextoValido(string valor)
+        {
+            return Regex.IsMatch(valor, @"^[a-zA-Z\s]+$"); // Solo letras y espacios
+        }
+
+        private void ValidarEdad(object sender, EventArgs e)
+        {
+            TextBox textBox = (TextBox)sender;
+            if (!EsEnteroValido(textBox.Text))
+            {
+                MessageBox.Show("Por favor, ingrese una edad válida.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                textBox.Clear();
+            }
+        }
+
+        private void ValidarEstatura(object sender, EventArgs e)
+        {
+            TextBox textBox = (TextBox)sender;
+            if (!EsDecimalValido(textBox.Text))
+            {
+                MessageBox.Show("Por favor, ingrese una estatura válida.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                textBox.Clear();
+            }
+        }
+
+        private void ValidarTelefono(object sender, EventArgs e)
+        {
+            TextBox textBox = (TextBox)sender;
+            if (!EsEnteroValidoDe10Digitos(textBox.Text))
+            {
+                MessageBox.Show("Por favor, ingrese un número de teléfono válido de 10 dígitos.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                textBox.Clear();
+            }
+        }
+
+        private void ValidarNombre(object sender, EventArgs e)
+        {
+            TextBox textBox = (TextBox)sender;
+            if (!EsTextoValido(textBox.Text))
+            {
+                MessageBox.Show("Por favor, ingrese un nombre válido (solo letras y espacios).", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                textBox.Clear();
+            }
+        }
+
+        private void ValidarApellidos(object sender, EventArgs e)
+        {
+            TextBox textBox = (TextBox)sender;
+            if (!EsTextoValido(textBox.Text))
+            {
+                MessageBox.Show("Por favor, ingrese apellidos válidos (solo letras y espacios).", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                textBox.Clear();
+            }
         }
 
         private void btnLimpiar_Click(object sender, EventArgs e)
         {
-
             // Limpiar los controles después de guardar
             tbNombre.Clear();
             tbApellidos.Clear();
@@ -76,7 +161,6 @@ namespace Formulario
             tbEdad.Clear();
             rbHombre.Checked = false;
             rbMujer.Checked = false;
-
         }
     }
 }
