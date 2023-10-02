@@ -20,7 +20,7 @@ namespace Formulario
             tbApellidos.TextChanged += ValidarApellidos;
         }
 
-        private void btnGuardar_Click(object sender, EventArgs e)
+        private void btnGuardar_Click_Click(object sender, EventArgs e)
         {
             // Obtener los datos de los TextBox
             string nombres = tbNombre.Text;
@@ -124,10 +124,19 @@ namespace Formulario
         private void ValidarTelefono(object sender, EventArgs e)
         {
             TextBox textBox = (TextBox)sender;
-            if (!EsEnteroValidoDe10Digitos(textBox.Text))
+            string input = textBox.Text;
+            // Eliminar espacios en blanco y guiones si es necesario
+            //input = input.Replace(" ", "").Replace("-", "");
+            if (input.Length > 10)
+            {
+                if (!EsEnteroValidoDe10Digitos(input))
+                {
+                    MessageBox.Show("Por favor, ingrese un número de teléfono válido de 10 dígitos.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    textBox.Clear();
+                }
+            } else if (!EsEnteroValidoDe10Digitos(input))
             {
                 MessageBox.Show("Por favor, ingrese un número de teléfono válido de 10 dígitos.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                textBox.Clear();
             }
         }
 
