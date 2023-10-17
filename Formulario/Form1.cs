@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using MySql.Data.MySqlClient; // Referencias necesaria para trabajar con localhost y XAMPP
@@ -128,12 +129,20 @@ namespace Formulario
             return decimal.TryParse(valor, out resultado);
         }
 
-        private bool EsEnteroValidoDe10Digitos(string valor)
+        private bool EsEnteroValidoDe10Digitos(string input)
         {
-            long resultado;
-            return long.TryParse(valor, out resultado) && valor.Length == 10;
-        }
+            if (input.Length != 10)
+            {
+                return false;
+            }
 
+            if (!input.All(char.IsDigit))
+            {
+                return false;
+            }
+            return true;
+        }
+       
         private bool EsTextoValido(string valor)
         {
             return Regex.IsMatch(valor, @"^[a-zA-Z\s]+$"); // Solo letras y espacios
@@ -165,16 +174,15 @@ namespace Formulario
             string input = textBox.Text;
             // Eliminar espacios en blanco y guiones si es necesario
             //input = input.Replace(" ", "").Replace("-", "");
-            if (input.Length > 10)
+            if (input.Length < 10)
             {
-                if (!EsEnteroValidoDe10Digitos(input))
-                {
-                    MessageBox.Show("Por favor, ingrese un número de teléfono válido de 10 dígitos.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    textBox.Clear();
-                }
-            } else if (!EsEnteroValidoDe10Digitos(input))
+                return;
+            }
+
+            if (!EsEnteroValidoDe10Digitos(input))
             {
                 MessageBox.Show("Por favor, ingrese un número de teléfono válido de 10 dígitos.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                textBox.Clear();
             }
         }
 
