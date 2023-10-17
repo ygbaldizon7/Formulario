@@ -3,11 +3,17 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
+using MySql.Data.MySqlClient; // Referencias necesaria para trabajar con localhost y XAMPP
+
 
 namespace Formulario
 {
     public partial class Form1 : Form
     {
+        // Datos de conexión a MySQL (XAMPP)
+        string conexionSQL = "Server=localhost;Port=3306;Database=programacionavanzada;Uid=root;Pwd=;";
+        //Metodo de para insetar registros
+
         public Form1()
         {
             InitializeComponent();
@@ -18,8 +24,31 @@ namespace Formulario
             tbTelefono.TextChanged += ValidarTelefono;
             tbNombre.TextChanged += ValidarNombre;
             tbApellidos.TextChanged += ValidarApellidos;
+           
         }
+        private void InsertarRegistro(string nombre, string apellidos, int edad, decimal estatura, string telefono, string genero)
+        {
+            using (MySqlConnection conection = new MySqlConnection(conexionSQL))
+            {
+                conection.Open();
 
+                string insertQuery = "INSERT INTO registros (Nombre, Apellidos, Edad, Estatura, Telefono, Genero) " +
+                                    "VALUES (@Nombre, @Apellidos, @Edad, @Estatura, @Telefono, @Genero)";
+
+                using (MySqlCommand command = new MySqlCommand(insertQuery, conection))
+                {
+                    command.Parameters.AddWithValue("@Nombre", nombre);
+                    command.Parameters.AddWithValue("@Apellidos", apellidos);
+                    command.Parameters.AddWithValue("@Edad", edad);
+                    command.Parameters.AddWithValue("@Estatura", estatura);
+                    command.Parameters.AddWithValue("@Telefono", telefono);
+                    command.Parameters.AddWithValue("@Genero", genero);
+
+                    command.ExecuteNonQuery();
+                }
+                conection.Close();
+            }
+        }
         private void btnGuardar_Click_Click(object sender, EventArgs e)
         {
             // Obtener los datos de los TextBox
@@ -48,7 +77,7 @@ namespace Formulario
                 string datos = $"Nombres: {nombres}\r\nApellidos: {apellidos}\r\nTeléfono: {telefono} kg\r\nEstatura: {estatura} cm\r\nEdad: {edad} años\r\nGénero: {genero}\r\n";
 
                 // Guardar los datos en un archivo de texto
-                string rutaArchivo = "C:/Users/ygbal/Documents/3o12.txt";
+                string rutaArchivo = "C:/Users/ygbal/Documents/DBvr1.txt";
                 bool archivoExiste = File.Exists(rutaArchivo);
                 if (archivoExiste == false)
                 {
@@ -63,9 +92,18 @@ namespace Formulario
                         {
                             // Si el archivo existe, añadir un separador antes del nuevo registro
                             writer.WriteLine();
+                            // Programación de funcionalidad de insert SQL
+                            InsertarRegistro(nombres, apellidos, int.Parse(edad), decimal.Parse(estatura), telefono, genero);
+                            MessageBox.Show("Datos ingresados corrrectamente.");
                         }
+                        else
+                        {
 
-                        writer.WriteLine(datos);
+                            writer.WriteLine(datos);
+                            // Programación de funcionalidad de insert SQL
+                            InsertarRegistro(nombres, apellidos, int.Parse(edad), decimal.Parse(estatura), telefono, genero);
+                            MessageBox.Show("Datos ingresados corrrectamente.");
+                        }
                     }
                 }
 
